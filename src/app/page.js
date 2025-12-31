@@ -3,8 +3,13 @@ import styles from "./page.module.css";
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-        hello meri jaan
+    <div>
+      <div className={styles.page}>
+        Chup
+      </div>
+      <div>
+        Kam kar
+      </div>
     </div>
   );
 }
