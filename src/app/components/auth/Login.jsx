@@ -2,6 +2,7 @@
 'use client';
 import { useState } from 'react';
 import styles from './LoginForm.module.css';
+import { useRouter } from "next/navigation";
 
 export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
@@ -9,6 +10,8 @@ export default function Login() {
         email: '',
         password: ''
     });
+
+    const router=useRouter();
 
     const handleInputChange = (e) => {
         setFormData({
@@ -21,6 +24,8 @@ export default function Login() {
         e.preventDefault();
         console.log('Login submitted:', formData);
         // Add your login authentication logic here
+        document.cookie = "auth=true; path=/";
+        router.push('/chat');
     };
 
     return (
