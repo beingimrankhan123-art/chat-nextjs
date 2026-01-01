@@ -2,6 +2,7 @@
 'use client';
 import { useState } from 'react';
 import styles from './LoginForm.module.css';
+import { useRouter } from 'next/navigation';
 
 export default function Signup() {
     const [showPassword, setShowPassword] = useState(false);
@@ -13,6 +14,8 @@ export default function Signup() {
         confirmPassword: ''
     });
 
+    const router = useRouter();
+
     const handleInputChange = (e) => {
         setFormData({
             ...formData,
@@ -20,18 +23,32 @@ export default function Signup() {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         // Validate password match
         if (formData.password !== formData.confirmPassword) {
             alert('Passwords do not match!');
             return;
         }
-        
+
         console.log('Signup submitted:', formData);
         // Add your signup authentication logic here
+        const res = await fetch("/api/signup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData),
+        });
+
+        if (res.ok) {
+            alert("Signup successful. Please login.");
+            router.push("/login");
+        } else {
+            const data = await res.json();
+            alert(data.message);
+        }
     };
+
 
     return (
         <>

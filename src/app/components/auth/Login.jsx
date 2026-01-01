@@ -11,7 +11,7 @@ export default function Login() {
         password: ''
     });
 
-    const router=useRouter();
+    const router = useRouter();
 
     const handleInputChange = (e) => {
         setFormData({
@@ -20,12 +20,22 @@ export default function Login() {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Login submitted:', formData);
+        // console.log('Login submitted:', formData);
         // Add your login authentication logic here
-        document.cookie = "auth=true; path=/";
-        router.push('/chat');
+        // document.cookie = "auth=true; path=/";
+        const res = await fetch("/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData),
+        });
+
+        if (res.ok) {
+            router.push("/chat");
+        } else {
+            alert("Invalid login");
+        }
     };
 
     return (
