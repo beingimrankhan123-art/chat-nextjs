@@ -1,8 +1,9 @@
-// components/Login.js
 'use client';
+
 import { useState } from 'react';
 import styles from './LoginForm.module.css';
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
@@ -22,19 +23,18 @@ export default function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // console.log('Login submitted:', formData);
-        // Add your login authentication logic here
-        // document.cookie = "auth=true; path=/";
-        const res = await fetch("/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData),
-        });
 
-        if (res.ok) {
+        // 🔐 NextAuth login
+        const res = await signIn("credentials", {
+            email: formData.email,
+            password: formData.password,
+            redirect: false, // important
+        });
+        console.log("res", res)
+        if (!res.error) {
             router.push("/chat");
         } else {
-            alert("Invalid login");
+            alert("Invalid email or password");
         }
     };
 

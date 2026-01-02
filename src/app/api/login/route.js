@@ -9,7 +9,7 @@ export async function POST(request) {
     );
 
     if (!user) {
-        return NextResponse.json( 
+        return NextResponse.json(
             { message: "Invalid credentials" },
             { status: 401 }
         );

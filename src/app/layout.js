@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "bootstrap/dist/css/bootstrap.min.css"; // ✅ Bootstrap CSS
 import "./globals.css";
+import Providers from "./provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,7 +25,7 @@ export default function RootLayout({ children }) {
       >
         {/* App Container */}
         <div className="container-fluid p-0 min-vh-100">
-          {children}
+          <Providers>{children}</Providers>
         </div>
 
         {/* Bootstrap JS (required for dropdown, modal, etc.) */}
