@@ -1,24 +1,37 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
+import { connectDB } from "@/lib/db";
+import user from "@/models/user";
 
 export const authOptions = {
     providers: [
         CredentialsProvider({
             name: "Credentials",
-
+            credentials: {
+                email: {},
+                password: {},
+            },
             async authorize(credentials) {
-                // TEMP user (replace with DB later)
-                if (
-                    credentials.email === "test@gmail.com" &&
-                    credentials.password === "123456"
-                ) {
-                    return {
-                        id: "1",
-                        email: credentials.email,
-                    };
-                }
+                await connectDB();
 
-                return null; // login failed
+                const user = await user.findOne({
+                    email: credentials.email,
+                });
+
+                if (!user) return null;
+
+                const isPasswordCorrect = await bcrypt.compare(
+                    credentials.password,
+                    user.password
+                );
+
+                if (!isPasswordCorrect) return null;
+
+                return {
+                    id: user._id.toString(),
+                    email: user.email,
+                };
             },
         }),
     ],
@@ -33,5 +46,4 @@ export const authOptions = {
 };
 
 const handler = NextAuth(authOptions);
-
 export { handler as GET, handler as POST };

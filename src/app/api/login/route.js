@@ -1,14 +1,27 @@
 import { NextResponse } from "next/server";
-import { users } from "@/lib/users";
+import dbConnect from "@/lib/dbConnect";
+import bcrypt from "bcryptjs";
+import user from "@/models/user";
 
 export async function POST(request) {
+    await dbConnect();
+
     const { email, password } = await request.json();
 
-    const user = users.find(
-        u => u.email === email && u.password === password
-    );
+    // find user
+    const user = await user.findOne({ email });
 
     if (!user) {
+        return NextResponse.json(
+            { message: "User not found" },
+            { status: 401 }
+        );
+    }
+
+    // compare password
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
         return NextResponse.json(
             { message: "Invalid credentials" },
             { status: 401 }
@@ -20,8 +33,8 @@ export async function POST(request) {
         { status: 200 }
     );
 
-    // set auth cookie
-    response.cookies.set("token", "dummy-token", {
+    // temporary auth cookie (later replace with JWT / NextAuth)
+    response.cookies.set("token", user._id.toString(), {
         httpOnly: true,
         path: "/",
     });
